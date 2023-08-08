@@ -29,14 +29,15 @@ if __name__ == '__main__':
     outname   = args.outname
     treename  = args.treename
 
-    wc_lst = args.wc_list if args.wc_list is not None else []
-
     # Load samples from json and setup the inputs to the processor
     samplesdict = {}
     json_file_name = json_file.split(".json")[0] # Drop the .json
     with open(json_file) as jf:
         samplesdict[json_file_name] = json.load(jf)
     flist = {json_file_name: samplesdict[json_file_name]["files"]}
+
+    #wc_lst = args.wc_list if args.wc_list is not None else []
+    wc_lst = samplesdict[json_file_name]["WCnames"]
 
     # Run the processor and get the output
     processor_instance = multilepeft.AnalysisProcessor(samplesdict,wc_lst)
