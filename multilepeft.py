@@ -26,9 +26,6 @@ class AnalysisProcessor(processor.ProcessorABC):
             'l0pt'    : HistEFT("Events", wc_names_lst, hist.Cat("sample", "sample"), hist.Cat("channel", "channel"), hist.Cat("cut", "cut"), hist.Bin("l0pt",   "Leading lep $p_{T}$ (GeV)", 15, 0, 400)),
         })
 
-        self._do_errors = do_errors # Whether to calculate and store the w**2 coefficients
-        self._do_systematics = do_systematics # Whether to process systematic samples
-
     @property
     def accumulator(self):
         return self._accumulator
@@ -57,7 +54,7 @@ class AnalysisProcessor(processor.ProcessorABC):
             # Check to see if the ordering of WCs for this sample matches what want
             if self._samples[dataset]['WCnames'] != self._wc_names_lst:
                 eft_coeffs = efth.remap_coeffs(self._samples[dataset]['WCnames'], self._wc_names_lst, eft_coeffs)
-        eft_w2_coeffs = efth.calc_w2_coeffs(eft_coeffs,self._dtype) if (self._do_errors and eft_coeffs is not None) else None
+        eft_w2_coeffs = None
 
         # Initialize objects (GEN objects)
         e = events.GenPart[abs(events.GenPart.pdgId)==11]
