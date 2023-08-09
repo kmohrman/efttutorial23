@@ -18,10 +18,6 @@ class AnalysisProcessor(processor.ProcessorABC):
         self._samples = samples
         self._wc_names_lst = wc_names_lst
 
-        # Create the histograms with old coffea hist
-        #self._accumulator = processor.dict_accumulator({
-            #'j0pt': HistEFT("Events", wc_names_lst, hist.Cat("sample", "sample"), hist.Bin("j0pt", "Leading jet $p_{T}$ (GeV)", 10, 0, 600)),
-        #})
 
         # Create the histograms with new scikit hist
         self._histo_dict = {
@@ -97,12 +93,14 @@ class AnalysisProcessor(processor.ProcessorABC):
 
         ######## Fill histos ########
 
+        j0pt = j0.pt
+
         hout = {"j0pt": self._histo_dict["j0pt"]}
 
         event_selection_mask = selections.all("2l2j")
         hout["j0pt"].fill(
             process   = hist_axis_name,
-            j0pt      = j0.pt[event_selection_mask],
+            j0pt      = j0pt[event_selection_mask],
             eft_coeff = eft_coeffs[event_selection_mask],
         )
 
