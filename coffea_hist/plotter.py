@@ -28,6 +28,7 @@ WCPT_EXAMPLE = {
     "ctq8" : -0.50,
 }
 
+
 # Takes a hist with one sparse axis and one dense axis, overlays everything on the sparse axis
 def make_single_fig(histo,unit_norm_bool):
     #print("\nPlotting values:",histo.values())
@@ -44,7 +45,7 @@ def make_single_fig(histo,unit_norm_bool):
 
 def main():
 
-    histo_in = "plotsTopEFT.pkl.gz"
+    histo_in = "histos_multilepeft.pkl.gz"
 
     # Get the histograms
     hin_dict = utils.get_hist_from_pkl(histo_in,allow_empty=False)
@@ -52,8 +53,10 @@ def main():
     histo = hin_dict["j0pt"]
 
     # Values
-    print("Values with overflow:",histo.values(overflow="over")[('ttHJet_privateUL17',)])
-    print("Sum:",sum(histo.values(overflow="over")[('ttHJet_privateUL17',)]))
+    #print("Values with overflow SM:",histo.values(overflow="over")[('ttHJet_privateUL17',)])
+    #histo.set_wilson_coefficients(**WCPT_EXAMPLE)
+    #print("Values with overflow EFT:",histo.values(overflow="over")[('ttHJet_privateUL17',)])
+    #print("Sum:",sum(histo.values(overflow="over")[('ttHJet_privateUL17',)]))
 
     histo.set_wilson_coefficients(**WCPT_EXAMPLE)
 

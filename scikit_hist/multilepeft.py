@@ -101,6 +101,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         hout["j0pt"].fill(
             process   = hist_axis_name,
             j0pt      = j0pt[event_selection_mask],
+            weight    = wgts[event_selection_mask],
             eft_coeff = eft_coeffs[event_selection_mask],
         )
 
