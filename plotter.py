@@ -49,12 +49,11 @@ def main():
     # Get the histograms
     hin_dict = utils.get_hist_from_pkl(histo_in,allow_empty=False)
 
-    print(hin_dict)
-
-    for k,v in hin_dict.items():
-        print(k,v.values())
-
     histo = hin_dict["j0pt"]
+
+    # Values
+    print("Values with overflow:",histo.values(overflow="over")[('ttHJet_privateUL17',)])
+    print("Sum:",sum(histo.values(overflow="over")[('ttHJet_privateUL17',)]))
 
     histo.set_wilson_coefficients(**WCPT_EXAMPLE)
 
