@@ -20,9 +20,9 @@ The processor depends on `topcoffea`, so that should be installed into your cond
 
 Example of running the processor over just the example root file we downloaded.
 ```
-python run_multilepeft.py UL17_ttH_example.json
+python run_processor.py UL17_ttH_example.json
 ```
-This will create a `histos_multilepeft.pkl.gz` file with an EFT histogram. 
+This will create a `histos.pkl.gz` file with an EFT histogram. 
 
 ## Plotting the histograms
 
