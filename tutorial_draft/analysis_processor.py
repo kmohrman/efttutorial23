@@ -5,8 +5,6 @@ np.seterr(divide='ignore', invalid='ignore', over='ignore')
 from coffea import processor
 from coffea.analysis_tools import PackedSelection
 
-import topcoffea.modules.eft_helper as efth
-
 import hist
 from topcoffea.modules.histEFT import HistEFT
 
@@ -43,7 +41,13 @@ class AnalysisProcessor(processor.ProcessorABC):
                 hist.axis.Regular(name="j0pt",label="Leading jet $p_{T}$ (GeV)", bins=10, start=0, stop=600, flow=True),
                 wc_names = self._wc_names_lst,
                 label="Events",
-            )
+            ),
+            "ht": HistEFT(
+                hist.axis.StrCategory([], growth=True, name="process"),
+                hist.axis.Regular(name="ht",label="H_T (GeV)", bins=10, start=0, stop=800, flow=True),
+                wc_names = self._wc_names_lst,
+                label="Events",
+            ),
         }
 
 
@@ -65,9 +69,11 @@ class AnalysisProcessor(processor.ProcessorABC):
         eft_coeffs = ak.to_numpy(events['EFTfitCoefficients']) if hasattr(events, "EFTfitCoefficients") else None
 
         # Initialize objects
-        ele  = events.Electron
-        mu   = events.Muon
-        jets = events.Jet
+        genpart = events.GenPart
+        is_final_mask = genpart.hasFlags(["fromHardProcess","isLastCopy"])
+        ele  = genpart[is_final_mask & (abs(genpart.pdgId) == 11)]
+        mu   = genpart[is_final_mask & (abs(genpart.pdgId) == 13)]
+        jets = events.GenJet
 
 
         ######## Lep selection  ########
@@ -106,17 +112,25 @@ class AnalysisProcessor(processor.ProcessorABC):
 
         ######## Fill histos ########
 
-        j0pt = j0.pt
+        hout = self._histo_dict
 
-        hout = {"j0pt": self._histo_dict["j0pt"]}
+        variables_to_fill = {
+            "j0pt" : j0.pt,
+            "ht" : ak.sum(jets.pt,axis=-1),
+        }
 
         event_selection_mask = selections.all("2l2j")
-        hout["j0pt"].fill(
-            process   = hist_axis_name,
-            j0pt      = j0pt[event_selection_mask],
-            weight    = wgts[event_selection_mask],
-            eft_coeff = eft_coeffs[event_selection_mask],
-        )
+
+        for var_name, var_values in variables_to_fill.items():
+
+            fill_info = {
+                var_name    : var_values[event_selection_mask],
+                "process"   : hist_axis_name,
+                "weight"    : wgts[event_selection_mask],
+                "eft_coeff" : eft_coeffs[event_selection_mask],
+            }
+
+            hout[var_name].fill(**fill_info)
 
         return hout
 
